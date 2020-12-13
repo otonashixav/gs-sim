@@ -1,3 +1,3 @@
-export function simulate() {
-	
+export function simulate(): void {
+	return;
 }
