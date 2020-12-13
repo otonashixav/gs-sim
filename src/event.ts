@@ -35,8 +35,8 @@ export class EventSequence {
 		eventSequenceSet.add(this._eventSequence);
 	}
 
-	/** Ends the EventSequence, preventing Events in it from being run. */
-	end(): void {
+	/** Stops the EventSequence, preventing Events in it from being run. */
+	stop(): void {
 		eventSequenceSet.delete(this._eventSequence);
 	}
 
