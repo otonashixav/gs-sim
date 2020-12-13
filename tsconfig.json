@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+		"strict": true,
+		"noImplicitReturns": true,
+		"forceConsistentCasingInFileNames": true,
+		"target": "ES5",
+		"module": "CommonJS",
+		"lib": ["ES2015", "ES2016", "ES2017", "ES2018"],
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"declaration": true,
+		"outDir": "dist"
+	},
+	"include": ["src/**/*"]
+}
