@@ -23,7 +23,7 @@ export function getTime(): number {
 const eventSequenceSet: Set<_EventSequence> = new Set();
 let time: number = 0;
 
-/** Public methods for EventSequence. */
+/** Public members of EventSequence. */
 export class EventSequence {
 	private _eventSequence: _EventSequence;
 	constructor(events: Event[]) {
@@ -53,7 +53,7 @@ export class EventSequence {
 	}
 }
 
-/** Internal methods for EventSequence. */
+/** Internal members of EventSequence. */
 class _EventSequence {
 	/** Ordered events that are part of the EventSequence. */
 	readonly events: Event[];
