@@ -1,68 +1,60 @@
-/** Class which handles the occurrence of events. */
-export class EventHandler {
-	private static time: number = 0;
-
-	/**
-	 * Creates a new EventSequence.
-	 * 
-	 * @param events - Events in the sequence. Should be sorted prior to calling this function.
-	 * @returns A the created EventSequence.
-	 */
-	static createEventSequence(events: Event[]): EventSequence {
-		return new EventSequenceImpl(events) as EventSequence;
-	}
-
-	/** Runs the next event. */
-	static runNextEvent(): void {
-		const nextEventSequence: EventSequenceImpl = Array.from(eventSequenceSet).sort(
-			(a, b) => (a.timeToNextEvent() - b.timeToNextEvent())
-		)[0]; // Always sort, since we don't know if the EventSequences are progressing at the same speed as before.
-		const elapsedTime: number = nextEventSequence.timeToNextEvent();
-		this.time += elapsedTime;
-		eventSequenceSet.forEach(eventSequence => eventSequence.elapseTime(elapsedTime));
-		const nextEvent: Event = nextEventSequence.popNextEvent();
-		nextEvent.run();
-	}
-
-	/** 
-	 * Returns the current time. 
-	 * 
-	 * @returns The current time.
-	 */
-	static getTime(): number {
-		return this.time;
-	}
+/** Runs the next event. */
+export function runNextEvent(): void {
+	const nextEventSequence: _EventSequence = Array.from(eventSequenceSet).sort(
+		(a, b) => (a.timeToNextEvent() - b.timeToNextEvent())
+	)[0]; // Always sort, since we don't know if the EventSequences are progressing at the same speed as before.
+	const elapsedTime: number = nextEventSequence.timeToNextEvent();
+	time += elapsedTime;
+	eventSequenceSet.forEach(eventSequence => eventSequence.elapseTime(elapsedTime));
+	const nextEvent: Event = nextEventSequence.popNextEvent();
+	nextEvent.run();
 }
 
-/** Interface for EventSequences. */
-export interface EventSequence {
-	/** Starts the EventSequence, allowing its Events to begin running. */
-	start(): void;
-	/** Ends the EventSequence, preventing Events in it from being run. */
-	end(): void;
-	/** Sets the speed at which time passes for the EventSequence. */
-	setSpeed(speed: number): void;
-	/** Pauses the EventSequence for some time. If already paused, it remains paused for the longer duration. */
-	pause(duration: number): void;
-}
-
-/** Interface for Events. */
-export interface Event {
-	/** A readable identifier (non-unique) for the Event. */
-	readonly name: string;
-	/** A Symbol identifying the Event. */
-	readonly id: symbol;
-	/** Time that the Event should run relative to the moment its EventSequence begins. */
-	readonly time: number;
-	/** What should happen when the Event runs. */
-	run(): void;
+/** 
+ * Returns the current time. 
+ * 
+ * @returns The current time.
+ */
+export function getTime(): number {
+	return time;
 }
 
 /** Closure-scoped set of EventSequences that EventSequenceImpl and EventHandler can access. */
-const eventSequenceSet: Set<EventSequenceImpl> = new Set();
+const eventSequenceSet: Set<_EventSequence> = new Set();
+let time: number = 0;
 
-/** Internal EventSequence implementation. */
-class EventSequenceImpl {
+/** Public methods for EventSequence. */
+export class EventSequence {
+	private _eventSequence: _EventSequence;
+	constructor(events: Event[]) {
+		this._eventSequence = new _EventSequence(events);
+	}
+
+	/** Starts the EventSequence, allowing its Events to begin running. */
+	start(): void {
+		eventSequenceSet.add(this._eventSequence);
+	}
+
+	/** Ends the EventSequence, preventing Events in it from being run. */
+	end(): void {
+		eventSequenceSet.delete(this._eventSequence);
+	}
+
+	/** Sets the speed at which time passes for the EventSequence. */
+	setSpeed(speed: number): void {
+		this._eventSequence.speed = speed;
+	}
+
+	/** Pauses the EventSequence for some time. If already paused, it remains paused for the longer duration. */
+	pause(duration: number): void {
+		if (duration >= this._eventSequence.pauseDuration) {
+			this._eventSequence.pauseDuration = duration;
+		}
+	}
+}
+
+/** Internal methods for EventSequence. */
+class _EventSequence {
 	/** Ordered events that are part of the EventSequence. */
 	readonly events: Event[];
 	/** Local time of the EventSequence i.e. the time elapsed since it was created. */
@@ -73,35 +65,6 @@ class EventSequenceImpl {
 	pauseDuration: number = 0;
 	constructor(events: Event[]) {
 		this.events = Array.from(events);
-	}
-
-	/** Starts the EventSequence by adding it to eventSequenceSet */
-	start(): void {
-		eventSequenceSet.add(this);
-	}
-	/** Ends the EventSequence by removing it from eventSequenceSet. */
-	end(): void {
-		eventSequenceSet.delete(this);
-	}
-
-	/** 
-	 * Sets the local speed of the EventSequence. 
-	 * 
-	 * @param speed - Speed to set the EventSequence to. 
-	 */
-	setSpeed(speed: number): void {
-		this.speed = speed;
-	}
-
-	/** 
-	 * Pauses the EventSequence for some duration. If already paused, it remains paused for the longer duration. 
-	 * 
-	 * @param duration - Duration to pause for.
-	 */
-	pause(duration: number): void {
-		if (duration > this.pauseDuration) {
-			this.pauseDuration = duration;
-		}
 	}
 
 	/** 
@@ -148,4 +111,16 @@ class EventSequenceImpl {
 			return event;
 		}
 	}
+}
+
+/** Interface for Events. */
+export interface Event {
+	/** A readable identifier (non-unique) for the Event. */
+	readonly name: string;
+	/** A Symbol identifying the Event. */
+	readonly id: symbol;
+	/** Time that the Event should run relative to the moment its EventSequence begins. */
+	readonly time: number;
+	/** What should happen when the Event runs. */
+	run(): void;
 }

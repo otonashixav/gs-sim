@@ -1,4 +1,4 @@
-import { EventHandler, EventSequence, Event } from "./event";
+import { runNextEvent, EventSequence, Event } from "./event";
 const s1: Event[] = [];
 const s2: Event[] = [];
 const s3: Event[] = [];
@@ -24,24 +24,24 @@ for (let i: number = 0; i < 15; i += 3) {
 }
 
 console.log(s1, s2, s3);
-const a: EventSequence = EventHandler.createEventSequence(s1);
-const b: EventSequence = EventHandler.createEventSequence(s2);
-const c: EventSequence = EventHandler.createEventSequence(s3);
+const a: EventSequence = new EventSequence(s1);
+const b: EventSequence = new EventSequence(s2);
+const c: EventSequence = new EventSequence(s3);
 a.start();
 b.start();
 c.start();
-EventHandler.runNextEvent();
-EventHandler.runNextEvent();
-EventHandler.runNextEvent();
-EventHandler.runNextEvent();
-EventHandler.runNextEvent();
-EventHandler.runNextEvent();
-EventHandler.runNextEvent();
-EventHandler.runNextEvent();
-EventHandler.runNextEvent();
-EventHandler.runNextEvent();
-EventHandler.runNextEvent();
-EventHandler.runNextEvent();
-EventHandler.runNextEvent();
-EventHandler.runNextEvent();
-EventHandler.runNextEvent();
+runNextEvent();
+runNextEvent();
+runNextEvent();
+runNextEvent();
+runNextEvent();
+runNextEvent();
+runNextEvent();
+runNextEvent();
+runNextEvent();
+runNextEvent();
+runNextEvent();
+runNextEvent();
+runNextEvent();
+runNextEvent();
+runNextEvent();
