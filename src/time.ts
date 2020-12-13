@@ -1,8 +1,7 @@
 namespace Time {
-	/**
-	 * Set to contain all active EventSequences. 
-	 */
+	/** Global time; time elapsed since Time began. */
 	let globalTime: number = 0;
+	/** Set to contain all active EventSequences. */
 	const eventSequenceSet: Set<EventSequence> = new Set();
 	
 	/**
@@ -23,9 +22,7 @@ namespace Time {
 		eventSequenceSet.delete(eventSequence);
 	}
 
-	/**
-	 * Runs the next event. 
-	 */
+	/** Runs the next event. */
 	export function runNextEvent(): void {
 		const eventSequence: EventSequence = Array.from(eventSequenceSet).sort(
 			(a, b) => (a._timeToNextEvent() - b._timeToNextEvent())
@@ -36,19 +33,25 @@ namespace Time {
 		eventSequence._runNextEvent();
 	}
 
-	abstract class Event {
+	/** Internal base class for all Events. */
+	export abstract class Event {
+		/** Time that the Event should occur, relative to when its EventSequence began. */
 		readonly time: number = 0;
+		/** What the Event should do. */
 		abstract run(): void;
 	}
 	
-	/**
-	 * A sequence of events to run. 
-	 */
+	/** A sequence of events to run. */
 	export class EventSequence {
+		/** Events to run. Should always be ordered. */
 		private events: Array<Event>;
+		/** Local time; time elapsed since the EventSequence began. */
 		private time: number = 0;
+		/** Speed at which the EventSequence experiences time. */
 		private speed: number = 1;
+		/** Time for which the EventSequence is paused. */
 		private pauseDuration: number = 0;
+		/** If the EventSequence persists after exhausting all its events. */
 		private isPersistent: boolean;
 
 		/**
@@ -61,6 +64,15 @@ namespace Time {
 			registerEventSequence(this);
 			this.events = events;
 			this.isPersistent = isPersistent;
+		}
+
+		/**
+		 * Add an Event to the EventSequence. It should occur after all existing events. 
+		 * 
+		 * @param event Event to add.
+		 */
+		addEvent(event: Event): void {
+			this.events.push(event);
 		}
 
 		/**
@@ -113,9 +125,7 @@ namespace Time {
 			return this.pauseDuration + (this.events[0].time - this.time) / this.speed;
 		}
 
-		/**
-		 * Runs the next event, or if there are no events, deregisters the EventSequence.
-		 */
+		/** Runs the next event, or if there are no events, deregisters the EventSequence. */
 		_runNextEvent(): void {
 			const event: Event | undefined = this.events.pop();
 			if (event === undefined) {
