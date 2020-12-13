@@ -3,15 +3,13 @@ export class EventHandler {
 	private static time: number = 0;
 
 	/**
-	 * Creates a new EventSequence, starting it immediately.
+	 * Creates a new EventSequence.
 	 * 
 	 * @param events - Events in the sequence. Should be sorted prior to calling this function.
 	 * @returns A the created EventSequence.
 	 */
 	static createEventSequence(events: Event[]): EventSequence {
-		const eventSequence: EventSequenceImpl = new EventSequenceImpl(events);
-		eventSequenceSet.add(eventSequence);
-		return eventSequence as EventSequence;
+		return new EventSequenceImpl(events) as EventSequence;
 	}
 
 	/** Runs the next event. */
@@ -34,6 +32,8 @@ export class EventHandler {
 
 /** Interface for EventSequences. */
 export interface EventSequence {
+	/** Starts the EventSequence, allowing its Events to begin running. */
+	start(): void;
 	/** Ends the EventSequence, preventing Events in it from being run. */
 	end(): void;
 	/** Sets the speed at which time passes for the EventSequence. */
@@ -71,7 +71,11 @@ class EventSequenceImpl {
 		this.events = events;
 	}
 
-	/** Ends the EventSequence, removing it from eventSequenceSet. */
+	/** Starts the EventSequence by adding it to eventSequenceSet */
+	start(): void {
+		eventSequenceSet.add(this);
+	}
+	/** Ends the EventSequence by removing it from eventSequenceSet. */
 	end(): void {
 		eventSequenceSet.delete(this);
 	}
@@ -115,7 +119,7 @@ class EventSequenceImpl {
 	 * Removes the next event from the internal event list, and returns it. 
 	*/
 	popNextEvent(): Event {
-		const event: Event | undefined = this.events.pop();
+		const event: Event | undefined = this.events.shift();
 		if (event === undefined) {
 			throw new Error("Attempted to pop from an EventSequence with no Events; check that there are events to run.");
 		} else {
