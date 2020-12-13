@@ -15,10 +15,11 @@ module.exports = {
 	},
 	rules: {
 		"semi": "off",
+		"prefer-const": "warn",
 		"@typescript-eslint/semi": "error",
 		"tsdoc/syntax": "warn",
 		"@typescript-eslint/no-inferrable-types": "off",
-		"@typescript-eslint/explicit-member-accessibility": "error",
+		"@typescript-eslint/no-namespace": "off",
 		"@typescript-eslint/typedef": [
 			"error",
 			{
