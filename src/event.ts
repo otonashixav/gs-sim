@@ -24,7 +24,11 @@ export class EventHandler {
 		nextEvent.run();
 	}
 
-	/** Returns the current time. */
+	/** 
+	 * Returns the current time. 
+	 * 
+	 * @returns The current time.
+	 */
 	static getTime(): number {
 		return this.time;
 	}
@@ -60,7 +64,7 @@ const eventSequenceSet: Set<EventSequenceImpl> = new Set();
 /** Internal EventSequence implementation. */
 class EventSequenceImpl {
 	/** Ordered events that are part of the EventSequence. */
-	events: Event[];
+	readonly events: Event[];
 	/** Local time of the EventSequence i.e. the time elapsed since it was created. */
 	time: number = 0;
 	/** Local speed of the EventSequence. */
@@ -68,7 +72,7 @@ class EventSequenceImpl {
 	/** Duration that the EventSequence is currently paused. Not affected by speed. */
 	pauseDuration: number = 0;
 	constructor(events: Event[]) {
-		this.events = events;
+		this.events = Array.from(events);
 	}
 
 	/** Starts the EventSequence by adding it to eventSequenceSet */
@@ -80,19 +84,31 @@ class EventSequenceImpl {
 		eventSequenceSet.delete(this);
 	}
 
-	/** Sets the local speed of the EventSequence. */
+	/** 
+	 * Sets the local speed of the EventSequence. 
+	 * 
+	 * @param speed - Speed to set the EventSequence to. 
+	 */
 	setSpeed(speed: number): void {
 		this.speed = speed;
 	}
 
-	/** Pauses the EventSequence for some duration. If already paused, it remains paused for the longer duration. */
+	/** 
+	 * Pauses the EventSequence for some duration. If already paused, it remains paused for the longer duration. 
+	 * 
+	 * @param duration - Duration to pause for.
+	 */
 	pause(duration: number): void {
 		if (duration > this.pauseDuration) {
 			this.pauseDuration = duration;
 		}
 	}
 
-	/** Elapses local time. */
+	/** 
+	 * Elapses local time. 
+	 * 
+	 * @param elapsedTime - Time to elapse.
+	 */
 	elapseTime(elapsedTime: number): void {
 		if (this.pauseDuration > 0) {
 			if (this.pauseDuration >= elapsedTime) {
@@ -106,7 +122,11 @@ class EventSequenceImpl {
 		this.time += elapsedTime * this.speed;
 	}
 
-	/** Returns the time to the next event. If no events exist, returns Infinity. */
+	/** 
+	 * Returns the time to the next event. If no events exist, returns Infinity. 
+	 * 
+	 * @returns Time to the next event, or Infinity if no events exist.
+	 */
 	timeToNextEvent(): number {
 		if (this.events.length === 0) {
 			return Infinity;
@@ -117,7 +137,9 @@ class EventSequenceImpl {
 
 	/** 
 	 * Removes the next event from the internal event list, and returns it. 
-	*/
+	 * 
+	 * @returns The next event in the internal event list.
+	 */
 	popNextEvent(): Event {
 		const event: Event | undefined = this.events.shift();
 		if (event === undefined) {
