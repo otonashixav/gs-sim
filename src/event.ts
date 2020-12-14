@@ -27,7 +27,7 @@ let time: number = 0;
 export class EventSequence {
 	private _eventSequence: _EventSequence;
 
-	constructor(events: Event[], speedFunction: () => number) {
+	constructor(events: Event[], speedFunction: () => number = (() => 1)) {
 		this._eventSequence = new _EventSequence(events, speedFunction);
 		eventSequenceSet.add(this._eventSequence);
 	}
