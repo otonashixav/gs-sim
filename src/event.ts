@@ -10,9 +10,9 @@ export function runNextEvent(): void {
 	nextEvent.run();
 }
 
-/** 
- * Returns the current time. 
- * 
+/**
+ * Returns the current time.
+ *
  * @returns The current time.
  */
 export function getTime(): number {
@@ -29,9 +29,9 @@ export class EventSequence {
 	private _eventSequence: _EventSequence;
 
 	/**
-	 * Creates a new EventSequence. 
-	 * 
-	 * @param events - Events to run. A sorted copy is made internally. 
+	 * Creates a new EventSequence.
+	 *
+	 * @param events - Events to run. A sorted copy is made internally.
 	 * @param speedFunction - A function that returns the speed that the EventSequence should run at. Default always returns 1.
 	 */
 	constructor(events: Event[], speedFunction: () => number = (() => 1)) {
@@ -59,18 +59,18 @@ class _EventSequence {
 		this.speedFunction = speedFunction;
 	}
 
-	/** 
-	 * Elapses local time. 
-	 * 
+	/**
+	 * Elapses local time.
+	 *
 	 * @param elapsedTime - Time to elapse.
 	 */
 	elapseTime(elapsedTime: number): void {
 		this.time += elapsedTime * this.speedFunction();
 	}
 
-	/** 
-	 * Returns the time to the next event. If no events exist, returns Infinity. 
-	 * 
+	/**
+	 * Returns the time to the next event. If no events exist, returns Infinity.
+	 *
 	 * @returns Time to the next event, or Infinity if no events exist.
 	 */
 	timeToNextEvent(): number {
@@ -81,9 +81,9 @@ class _EventSequence {
 		}
 	}
 
-	/** 
-	 * Removes the next event from the internal event list, and returns it. 
-	 * 
+	/**
+	 * Removes the next event from the internal event list, and returns it.
+	 *
 	 * @returns The next event in the internal event list.
 	 */
 	popNextEvent(): Event {
