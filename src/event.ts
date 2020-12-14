@@ -25,8 +25,15 @@ let time: number = 0;
 
 /** Public members of EventSequence. */
 export class EventSequence {
+	/** Hide private members from outside the module. */
 	private _eventSequence: _EventSequence;
 
+	/**
+	 * Creates a new EventSequence. 
+	 * 
+	 * @param events - Events to run. A sorted copy is made internally. 
+	 * @param speedFunction - A function that returns the speed that the EventSequence should run at. Default always returns 1.
+	 */
 	constructor(events: Event[], speedFunction: () => number = (() => 1)) {
 		this._eventSequence = new _EventSequence(events, speedFunction);
 		eventSequenceSet.add(this._eventSequence);
@@ -48,7 +55,7 @@ class _EventSequence {
 	readonly speedFunction: () => number;
 
 	constructor(events: Event[], speedFunction: () => number) {
-		this.events = Array.from(events);
+		this.events = Array.from(events).sort((a, b) => a.time - b.time);
 		this.speedFunction = speedFunction;
 	}
 
