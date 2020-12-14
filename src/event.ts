@@ -26,30 +26,15 @@ let time: number = 0;
 /** Public members of EventSequence. */
 export class EventSequence {
 	private _eventSequence: _EventSequence;
-	constructor(events: Event[]) {
-		this._eventSequence = new _EventSequence(events);
-	}
 
-	/** Starts the EventSequence, allowing its Events to begin running. */
-	start(): void {
+	constructor(events: Event[], speedFunction: () => number) {
+		this._eventSequence = new _EventSequence(events, speedFunction);
 		eventSequenceSet.add(this._eventSequence);
 	}
 
-	/** Stops the EventSequence, preventing Events in it from being run. */
-	stop(): void {
+	/** Deletes the EventSequence. */
+	delete(): void {
 		eventSequenceSet.delete(this._eventSequence);
-	}
-
-	/** Sets the speed at which time passes for the EventSequence. */
-	setSpeed(speed: number): void {
-		this._eventSequence.speed = speed;
-	}
-
-	/** Pauses the EventSequence for some time. If already paused, it remains paused for the longer duration. */
-	pause(duration: number): void {
-		if (duration >= this._eventSequence.pauseDuration) {
-			this._eventSequence.pauseDuration = duration;
-		}
 	}
 }
 
@@ -59,12 +44,12 @@ class _EventSequence {
 	readonly events: Event[];
 	/** Local time of the EventSequence i.e. the time elapsed since it was created. */
 	time: number = 0;
-	/** Local speed of the EventSequence. */
-	speed: number = 1;
-	/** Duration that the EventSequence is currently paused. Not affected by speed. */
-	pauseDuration: number = 0;
-	constructor(events: Event[]) {
+	/** Function that returns the speed at which the EventSequence should run. */
+	readonly speedFunction: () => number;
+
+	constructor(events: Event[], speedFunction: () => number) {
 		this.events = Array.from(events);
+		this.speedFunction = speedFunction;
 	}
 
 	/** 
@@ -73,16 +58,7 @@ class _EventSequence {
 	 * @param elapsedTime - Time to elapse.
 	 */
 	elapseTime(elapsedTime: number): void {
-		if (this.pauseDuration > 0) {
-			if (this.pauseDuration >= elapsedTime) {
-				this.pauseDuration -= elapsedTime;
-				return;
-			} else {
-				elapsedTime -= this.pauseDuration;
-				this.pauseDuration = 0;
-			}
-		}
-		this.time += elapsedTime * this.speed;
+		this.time += elapsedTime * this.speedFunction();
 	}
 
 	/** 
@@ -94,7 +70,7 @@ class _EventSequence {
 		if (this.events.length === 0) {
 			return Infinity;
 		} else {
-			return this.pauseDuration + (this.events[0].time - this.time) / this.speed;
+			return (this.events[0].time - this.time) / this.speedFunction();
 		}
 	}
 
@@ -115,10 +91,6 @@ class _EventSequence {
 
 /** Interface for Events. */
 export interface Event {
-	/** A readable identifier (non-unique) for the Event. */
-	readonly name: string;
-	/** A Symbol identifying the Event. */
-	readonly id: symbol;
 	/** Time that the Event should run relative to the moment its EventSequence begins. */
 	readonly time: number;
 	/** What should happen when the Event runs. */
