@@ -1,11 +1,11 @@
 /** Runs the next event. */
 export function runNextEvent(): void {
-	const nextEventSequence: _EventSequence = Array.from(eventSequenceSet).sort(
+	const nextEventSequence: _EventSequence = Array.from(eventSequenceList).sort(
 		(a, b) => (a.timeToNextEvent() - b.timeToNextEvent())
 	)[0]; // Always sort, since we don't know if the EventSequences are progressing at the same speed as before.
 	const elapsedTime: number = nextEventSequence.timeToNextEvent();
 	time += elapsedTime;
-	eventSequenceSet.forEach(eventSequence => eventSequence.elapseTime(elapsedTime));
+	eventSequenceList.forEach(eventSequence => eventSequence.elapseTime(elapsedTime));
 	const nextEvent: Event = nextEventSequence.popNextEvent();
 	nextEvent.run();
 }
@@ -20,13 +20,14 @@ export function getTime(): number {
 }
 
 /** Closure-scoped set of EventSequences that EventSequenceImpl and EventHandler can access. */
-const eventSequenceSet: Set<_EventSequence> = new Set();
+const eventSequenceList: _EventSequence[] = [];
 let time: number = 0;
 
 /** Public members of EventSequence. */
 export class EventSequence {
 	/** Hide private members from outside the module. */
 	private _eventSequence: _EventSequence;
+	private _isAlive: boolean;
 
 	/**
 	 * Creates a new EventSequence.
@@ -36,12 +37,20 @@ export class EventSequence {
 	 */
 	constructor(events: Event[], speedFunction: () => number = (() => 1)) {
 		this._eventSequence = new _EventSequence(events, speedFunction);
-		eventSequenceSet.add(this._eventSequence);
+		eventSequenceList.push(this._eventSequence);
+		this._isAlive = true;
 	}
 
 	/** Deletes the EventSequence. */
 	delete(): void {
-		eventSequenceSet.delete(this._eventSequence);
+		// Just removes the first instance, but there shouldn't be two identical sequences since only one is ever inserted (on creation).
+		eventSequenceList.splice(eventSequenceList.indexOf(this._eventSequence), 1);
+		this._isAlive = false;
+	}
+
+	/** Returns true if the EventSequence has not been deleted, and false if it has. */
+	isAlive(): boolean {
+		return this._isAlive;
 	}
 }
 

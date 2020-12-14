@@ -1,7 +1,14 @@
 import { getTime, runNextEvent, EventSequence, Event } from "./event";
 const aSeq: Event[] = [
 	{ time: 1.5, run: () => cSpd = 0.2 },
-	{ time: 3, run: () => bSpd = 2 }
+	{ time: 3, run: () => bSpd = 2 },
+	{ time: 3.7, run: () => d.delete() },
+	{ time: 100, run: () => console.log("end") },
+	{ time: 100, run: () => console.log("end") },
+	{ time: 100, run: () => console.log("end") },
+	{ time: 100, run: () => console.log("end") },
+	{ time: 100, run: () => console.log("end") },
+	{ time: 100, run: () => console.log("end") }
 ];
 const bSeq: Event[] = [
 	{ time: 1, run: () => console.log("b1 " + getTime().toString()) },
@@ -24,6 +31,7 @@ let cSpd: number = 2;
 const a: EventSequence = new EventSequence(aSeq, () => aSpd);
 const b: EventSequence = new EventSequence(bSeq, () => bSpd);
 const c: EventSequence = new EventSequence(cSeq, () => cSpd);
+const d: EventSequence = new EventSequence(cSeq, () => cSpd);
 runNextEvent();
 runNextEvent();
 runNextEvent();
@@ -38,3 +46,7 @@ runNextEvent();
 runNextEvent();
 runNextEvent();
 runNextEvent();
+runNextEvent();
+runNextEvent();
+console.log(c.isAlive());
+console.log(d.isAlive());
