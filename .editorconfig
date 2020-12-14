@@ -1,6 +1,14 @@
 root = true
 
-[{.editorconfig, .eslintignore, .eslintrc.js, .gitignore, README.md, tsconfig.json, src/**/*}]
+[{.editorconfig, .eslintignore, .eslintrc.js, .gitignore, README.md, tsconfig.json}]
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+charset = utf-8
+indent_style = tab
+tab_width = 4
+
+[src/**.ts]
 end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
