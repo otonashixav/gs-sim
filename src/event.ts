@@ -27,7 +27,6 @@ let time: number = 0;
 export class EventSequence {
 	/** Hide private members from outside the module. */
 	private _eventSequence: _EventSequence;
-	private _isAlive: boolean;
 
 	/**
 	 * Creates a new EventSequence.
@@ -38,19 +37,12 @@ export class EventSequence {
 	constructor(events: Event[], speedFunction: () => number = (() => 1)) {
 		this._eventSequence = new _EventSequence(events, speedFunction);
 		eventSequenceList.push(this._eventSequence);
-		this._isAlive = true;
 	}
 
 	/** Deletes the EventSequence. */
 	delete(): void {
 		// Just removes the first instance, but there shouldn't be two identical sequences since only one is ever inserted (on creation).
 		eventSequenceList.splice(eventSequenceList.indexOf(this._eventSequence), 1);
-		this._isAlive = false;
-	}
-
-	/** Returns true if the EventSequence has not been deleted, and false if it has. */
-	isAlive(): boolean {
-		return this._isAlive;
 	}
 }
 
