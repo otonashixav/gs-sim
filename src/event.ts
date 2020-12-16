@@ -44,20 +44,24 @@ export class EventSequence {
 		// Just removes the first instance, but there shouldn't be two identical sequences since only one is ever inserted (on creation).
 		eventSequenceList.splice(eventSequenceList.indexOf(this._eventSequence), 1);
 	}
+
+	/** Reinitializes an undeleted EventSequence with new parameters. Used where one would have to delete and reconstruct an EventSequence. */
+	reinitialize(events: Event[], speedFunction: () => number = (() => 1)): void {
+		this._eventSequence.initialize(events, speedFunction);
+	}
 }
 
 /** Internal members of EventSequence. */
 class _EventSequence {
 	/** Ordered events that are part of the EventSequence. */
-	readonly events: Event[];
+	events!: Event[];
 	/** Local time of the EventSequence i.e. the time elapsed since it was created. */
 	time: number = 0;
 	/** Function that returns the speed at which the EventSequence should run. */
-	readonly speedFunction: () => number;
+	speedFunction!: () => number;
 
 	constructor(events: Event[], speedFunction: () => number) {
-		this.events = Array.from(events).sort((a, b) => a.time - b.time);
-		this.speedFunction = speedFunction;
+		this.initialize(events, speedFunction);
 	}
 
 	/**
@@ -95,6 +99,11 @@ class _EventSequence {
 			return event;
 		}
 	}
+
+	initialize(events: Event[], speedFunction: () => number): void {
+		this.events = Array.from(events).sort((a, b) => a.time - b.time);
+		this.speedFunction = speedFunction;
+	}
 }
 
 /** Interface for Events. */
@@ -102,5 +111,5 @@ export interface Event {
 	/** Time that the Event should run relative to the moment its EventSequence begins. */
 	readonly time: number;
 	/** What should happen when the Event runs. */
-	run(): void;
+	readonly run: () => void;
 }

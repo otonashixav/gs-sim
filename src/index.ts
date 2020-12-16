@@ -48,5 +48,3 @@ runNextEvent();
 runNextEvent();
 runNextEvent();
 runNextEvent();
-console.log(c.isAlive());
-console.log(d.isAlive());
