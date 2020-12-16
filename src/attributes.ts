@@ -1,25 +1,34 @@
-export interface Modifier {
-	getValue(attributes: Attributes): number;
+import { EventSequence } from "./event";
+
+interface Modifier {
+	attributeName: string,
+	maxStacks?: number,
+	duration?: number,
+	value: (stacks: number) => number
+}
+
+interface ModifierProperties {
+	stacks: number,
+	eventSequence?: EventSequence
 }
 
 export class Attributes {
-	private attributeMap: Map<string, Modifier[]> = new Map();
+	map: Map<string, Map<Modifier, ModifierProperties>> = new Map();
 
-	getValue(attributeName: string): number {
-		const modifierList: Modifier[] | undefined = this.attributeMap.get(attributeName);
-		if (modifierList === undefined) {
-			return 0;
-		} else {
-			return modifierList.reduce((sum, modifier) => sum + modifier.getValue(this), 0);
+	apply(modifier: Modifier): void {
+		if (!this.map.has(modifier.attributeName)) {
+			this.map.set(modifier.attributeName, new Map());
 		}
+		const properties: ModifierProperties = {
+			stacks: 1
+		};
+		modifier.duration?
+		this.map.get(modifier.attributeName)!.set(modifier, { stacks: 1 });
 	}
 
-	applyModifier(attributeName: string, modifier: Modifier): void {
-		const modifierList: Modifier[] | undefined = this.attributeMap.get(attributeName);
-		if (modifierList === undefined) {
-			this.attributeMap.set(attributeName, [modifier]);
-		} else {
-			modifierList.push(modifier);
-		}
+	get(attributeName: string): number {
+		let value: number = 0;
+		this.map.get(attributeName)?.forEach((properties, modifier) => (value += (modifier.value(properties.stacks))));
+		return value;
 	}
 }
