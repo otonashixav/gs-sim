@@ -45,9 +45,19 @@ export class EventSequence {
 		eventSequenceList.splice(eventSequenceList.indexOf(this._eventSequence), 1);
 	}
 
-	/** Reinitializes an undeleted EventSequence with new parameters. Used where one would have to delete and reconstruct an EventSequence. */
+	/**
+	 * Reinitializes an undeleted EventSequence with new parameters. Used where one would have to delete and reconstruct an EventSequence.
+	 *
+	 * @param events - Events to run. A sorted copy is made internally.
+	 * @param speedFunction - A function that returns the speed that the EventSequence should run at. Default always returns 1.
+	 */
 	reinitialize(events: Event[], speedFunction: () => number = (() => 1)): void {
 		this._eventSequence.initialize(events, speedFunction);
+	}
+
+	/** Returns the current time. */
+	getTime(): number {
+		return this._eventSequence.time;
 	}
 }
 
